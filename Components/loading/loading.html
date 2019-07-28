@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Sign in/Sign up </title>
+
+<style>
+body {
+  background-image: url("ducky.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.name {
+  color: dodgerblue;
+  font-size: 15vh;
+  margin-top: 20vh;
+  text-align: center;
+}
+* {
+  box-sizing: border-box;
+}
+.container {
+  margin-top: 10vh;
+  margin-left:35vw;
+  margin-right:35vw;
+  text-align: center;
+  position: relative;
+}
+.btn {
+  background-color: pink;
+  color:black;
+  cursor:pointer;
+  width: 100%;
+  font-size: 15px;
+  padding: 12px;
+  margin: 5px 0;
+  line-height:25px;
+  border-radius:10px;
+}
+.btn:hover {
+  background-color: powderblue;
+}
+</style>
+<script src="/__/firebase/6.2.0/firebase-app.js"></script>
+    <script src="/__/firebase/6.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
+
+    <script type="text/javascript">
+      function signIn() {
+          var provider = new firebase.auth.GoogleAuthProvider();
+          provider.addScope('https://www.googleapis.com/auth/plus.login');
+          firebase.auth().signInWithRedirect(provider);
+      }
+      function initApp() {
+          firebase.auth().getRedirectResult().then(function(result) {
+            if (result.credential) {
+                var token = result.credential.accessToken;
+            }
+            var user = result.user;
+          }).catch(function(error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            var email = error.email;
+            var credential = error.credential;
+            if (errorCode === 'auth/account-exists-with-different-credential') {
+                alert('You have already signed up with a different auth provider for that email.');
+             } else {
+                console.error(error);
+            }
+          });
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              document.getElementById('login').textContent = 'wait to be redirected....';
+              document.getElementById('login').disabled = true;
+              window.location = "todo2.html";
+            } else {
+                // User is signed out.
+                document.getElementById('login').textContent = 'Sign in with Google';
+            }
+          });
+            document.getElementById('login').addEventListener('click', signIn, false);
+      }
+      window.onload = function() {
+          initApp();
+      };
+    
+  </script>
+</head>
+
+<body>
+  <div class="name"> 
+    PRODUCKTIVE
+  </div>
+
+  <div class="container">
+    <button class="btn" id="login">Loading...</button>
+  </div>
+</body>
+</html>
